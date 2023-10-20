@@ -83,8 +83,8 @@ public class Mob {
     public int recoveryTimeCount;
     public Vector<Integer> chars;
     public boolean isDead;
-    public double damageOnPlayer, damageOnPlayer2;
-    public double damageOnMob, damageOnMob2;
+    public int damageOnPlayer, damageOnPlayer2;
+    public int damageOnMob, damageOnMob2;
     @Setter
     public Zone zone;
     public ItemMap itemMap;
@@ -367,11 +367,11 @@ public class Mob {
             }else if (type == UPYEN) {
                 itemId = RandomItem.UPYEN.next();
             }
-            
+
             else if (zone.map.id == 169) {
                     itemId = RandomItem.vt.next();
                 }
-            
+
             else if (type == LANG_TRUYEN_THUYET) {
                 itemId = RandomItem.LANG_TRUYEN_THUYET.next();
                 if (this.levelBoss == 1 && (int)NinjaUtils.nextInt(1000) == 0) {
@@ -917,7 +917,7 @@ public class Mob {
                             dropItem(killer, Mob.vt);
                         }
                     }
-                    
+
                     else if (zone.tilemap.isLangTruyenThuyet()) {
                         if ((int)NinjaUtils.nextInt(12) == 0) {
                             this.dropItem(killer, Mob.LANG_TRUYEN_THUYET);

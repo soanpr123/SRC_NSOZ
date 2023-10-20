@@ -46,7 +46,7 @@ import com.nsoz.model.User;
 import com.nsoz.map.War;
 import com.nsoz.network.Session;
 import com.nsoz.option.SkillOption;
-import com.nsoz.socket.SocketIO;
+
 import com.nsoz.stall.StallManager;
 import com.nsoz.effect.EffectTemplate;
 import com.nsoz.lib.ImageMap;
@@ -138,7 +138,7 @@ public class Server {
 
     public static boolean init() {
         start = false;
-        MongoDbConnection.connect();
+//        MongoDbConnection.connect();
         Task.arrTaskTemplate = new ArrayList<>();
         sks = new ArrayList<>();
         parts = new ArrayList<>();
@@ -1215,7 +1215,7 @@ public class Server {
             threadStall.start();
             GameData.getInstance().start();
             WorldManager.getInstance().start();
-            SocketIO.init();
+
             SpawnBossManager.getInstance().init();
             SpawnBossManager.getInstance().spawn(6, 0, 0, SpawnBossManager.THUONG, SpawnBossManager.RANDOM);
             SpawnBossManager.getInstance().spawn(12, 30, 0, SpawnBossManager.THUONG, SpawnBossManager.RANDOM);
@@ -1324,7 +1324,28 @@ public class Server {
             e.printStackTrace();
         }
     }
-
+    public static void maintance() {
+        try {
+            NinjaSchool.isStop = true;
+            LuckyDrawManager.getInstance().stop();
+            Log.info("Chuẩn bị đóng máy chủ.");
+            String name = "Hệ thống";
+            String text = "Máy chủ bảo trì sau 5 phút, vui lòng thoát game để tránh mất dữ liệu. Nếu cố tình không thoát chúng tôi không chịu trách nhiệm!";
+            GlobalService.getInstance().chat(name, text);
+            GlobalService.getInstance().showAlert(name, text);
+            Log.info("Hệ thống Đóng sau 5 phút.");
+            Thread.sleep(240000);
+            String text2 = "Máy chủ bảo trì sau 1 phút, vui lòng thoát game để tránh mất dữ liệu. Nếu cố tình không thoát chúng tôi không chịu trách nhiệm!";
+            GlobalService.getInstance().chat(name, text2);
+            GlobalService.getInstance().showAlert(name, text2);
+            Log.info("Hệ thống Đóng sau 1 phút.");
+            Thread.sleep(60000);
+            Log.info("Hệ thống Bắt đầu đóng máy chủ.");
+            Server.stop();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
     public static void close() {
         try {
             List<User> users = ServerManager.getUsers();

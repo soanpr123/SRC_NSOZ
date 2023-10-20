@@ -67,7 +67,7 @@ public class Session implements ISession {
     public static HashMap<String, Lock> lockLogins = new HashMap<>();
     public boolean isClosed;
     private int versionInt;
-    
+
     public Session(Socket sc, int id) throws IOException {
         this.sc = sc;
         this.id = id;
@@ -521,17 +521,19 @@ public class Session implements ISession {
         public void run() {
             Message message;
             try {
-                while (connected) {
+                while (true) {
                     message = readMessage();
                     if (message != null) {
                         try {
                             if (!sendKeyComplete) {
                                 sendKey();
                             } else {
-                                if (message.getCommand() == 120) 
+                                if (message.getCommand() == 120)
                                 {
                                    NoService.clientConnect(Session.this, message);
                                 }
+                                System.out.println("Session: " + Session.this.id + " do message " + message.getCommand() + " size " + message.reader().available());
+
                                 processMessage(message);
                             }
                         } catch (Exception e) {
@@ -543,7 +545,8 @@ public class Session implements ISession {
                 }
             } catch (Exception ex) {
             }
-            closeMessage();
+
+
         }
 
         private Message readMessage() throws Exception {
@@ -552,7 +555,7 @@ public class Session implements ISession {
                 if (!sendKeyComplete && 0 <= cmd && cmd <= 6) {
                     sendKeyComplete = true;
                 }
-                
+
                 if (sendKeyComplete) {
                     cmd = readKey(cmd);
                 }

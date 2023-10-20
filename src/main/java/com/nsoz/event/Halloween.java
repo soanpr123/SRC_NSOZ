@@ -162,7 +162,8 @@ public class Halloween extends Event {
             }else{
             if((int)NinjaUtils.nextInt(100) > 40){
              useEventItem(_char, item.id, itemsRecFromCoinItem);
-            }else{
+            }
+            else{
                 long exp = (int)NinjaUtils.nextInt(1, 1000) * 1000;
             _char.addExp(exp);
             _char.serverMessage("Bạn Nhận Được "+exp+" exp");
@@ -606,14 +607,14 @@ public class Halloween extends Event {
                 }
             }
             break;
-    
+
             } else if (currentHour > 13) { //giờ đóng map
-            closeMapViThu(); 
+            closeMapViThu();
             }
          break;
         }
     }
-    
+
     public List<Char> getMembers() {
         lock.readLock().lock();
         try {
@@ -622,7 +623,7 @@ public class Halloween extends Event {
             lock.readLock().unlock();
         }
     }
-    
+
     public void closeMapViThu() {
         List<Char> members = getMembers();
         for (Char _char : members) {

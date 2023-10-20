@@ -331,7 +331,7 @@ public class TalentShow extends Zone {
     public void showMenu(Char _charz) {
         ArrayList<Menu> menus = _charz.menus;
         menus.clear();
-        if (_charz.user.is1()) {
+        if (_charz.user.isAdmin()) {
             if (this.invited && !this.started) {
                 menus.add(new Menu(CMDMenu.EXECUTE, "Bắt đầu", () -> {
                     if (players.size() > 0) {

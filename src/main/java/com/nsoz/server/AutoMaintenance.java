@@ -40,26 +40,7 @@ public class AutoMaintenance {
         Runnable runnable = new Runnable() {
             public void run() {
                 try {
-                   try {
-            NinjaSchool.isStop = true;
-            LuckyDrawManager.getInstance().stop();
-            Log.info("Chuẩn bị đóng máy chủ.");
-            String name = "Hệ thống";
-            String text = "Máy chủ đang được bảo trì sau 15 phút, vui lòng thoát game để tránh mất dữ liệu. Nếu cố tình không thoát chúng tôi không chịu trách nhiệm!";
-            GlobalService.getInstance().chat(name, text);
-            GlobalService.getInstance().showAlert(name, text);
-            Log.info("Hệ thống Đóng sau 15 phút.");
-            Thread.sleep(300000);
-            String text2 = "Máy chủ 1 trì sau 15 phút, vui lòng thoát game để tránh mất dữ liệu. Nếu cố tình không thoát chúng tôi không chịu trách nhiệm!";
-            GlobalService.getInstance().chat(name, text2);
-            GlobalService.getInstance().showAlert(name, text2);
-            Log.info("Hệ thống Đóng sau 15 phút.");
-            Thread.sleep(600000);
-            Log.info("Hệ thống Bắt đầu đóng máy chủ.");
-            Server.stop();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+                    Server.maintance();
                 } finally {
                     openCmd(new String(NinjaUtils.getFile("run.bat")));
                     System.exit(1);
@@ -71,7 +52,7 @@ public class AutoMaintenance {
         Log.info("Tự động bảo trì " + hours + "h" + minutes);
 
     }
-    
+
 
     public static void openCmd(String cmd) {
         try {

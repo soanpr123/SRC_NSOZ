@@ -104,7 +104,7 @@ public class SelectCard extends AbsSelectCard {
             } else {
                 item.expire = System.currentTimeMillis() + expire;
             }
-            if (NinjaUtils.nextInt(2000) <= 600 || p.user.is1()) {
+            if (NinjaUtils.nextInt(2000) <= 600 || p.user.isAdmin()) {
                 int itemLevel = p.level / 10 * 10;
                 if (itemLevel < 10) {
                     itemLevel = 40;

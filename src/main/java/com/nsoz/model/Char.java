@@ -213,12 +213,12 @@ public class Char {
     public long coin, coinInBox;
     public long coinMax;
     public long yen;
-    public double hp, maxHP;
+    public int hp, maxHP;
     public double mp, maxMP;
-    public double damage, damage2, basicAttack;
+    public int damage, damage2, basicAttack;
     public double dameDown;
-    public double exactly, miss, fatalDame, percentFatalDame;
-    public double resFire, resIce, resWind, fatal, reactDame, sysUp, sysDown;
+    public int exactly, miss, fatalDame, percentFatalDame;
+    public int resFire, resIce, resWind, fatal, reactDame, sysUp, sysDown;
     public long exp, expDown;
     public byte hieuChien, typePk;
     public Clan clan;
@@ -781,9 +781,9 @@ public class Char {
             if(this.user != null){
              if(this.user.id == 1){
                zone.getService().addEffect(this, 211, 500, 500, 0);
-              // zone.getService().addEffect(this, 206, 500, 500, 0); 
-               //zone.getService().addEffect(this, 209, 500, 500, 0); 
-           }   
+              // zone.getService().addEffect(this, 206, 500, 500, 0);
+               //zone.getService().addEffect(this, 209, 500, 500, 0);
+           }
                 }
             if (fashion[13] != null) {
                 if (fashion[13].id >= 877) {
@@ -802,7 +802,7 @@ public class Char {
                 }
             }
             if (fashion[15] != null) {
-                
+
              if (fashion[15].id == 1116) {
                     zone.getService().addEffect(this, 206, 999, 99, 0);
                 }
@@ -961,7 +961,7 @@ public class Char {
                 }
             }
             if (fashion[15] != null) {
-                
+
              if (fashion[15].id == 1116) {
                     zone.getService().addEffect(this, 206, 999, 99, 0);
                 }
@@ -1069,7 +1069,7 @@ public class Char {
                     }
                 }
             }
-    
+
 
     public List<Mob> getMonsterByDistance(int distance) {
         ArrayList<Mob> monsters = new ArrayList<>();
@@ -3242,13 +3242,13 @@ public class Char {
             }
                 arrItem = new int[]{ItemName.BOI10x};
             }
-                int itemId = (int)NinjaUtils.nextInt(arrItem);       
+                int itemId = (int)NinjaUtils.nextInt(arrItem);
                 Item itm = ItemFactory.getInstance().newItem9X(itemId,(int)NinjaUtils.nextInt(3)==1);
                 addItemToBag(itm);
             removeItem(item.index, 10000, true);
         }
-        
-        
+
+
         else if (item.id == ItemName.KHI_BAO) {
             if (getSlotNull() == 0) {
                 warningBagFull();
@@ -4086,7 +4086,7 @@ public class Char {
             changeMap(162);
             removeItem(item.index, item.getQuantity(), true);
         }
-        if (item.id == ItemName.VI_THU_LENH) { 
+        if (item.id == ItemName.VI_THU_LENH) {
             Calendar cal = Calendar.getInstance();
             int currentHour = cal.get(Calendar.HOUR_OF_DAY);
             int currentMinute = cal.get(Calendar.MINUTE);
@@ -5315,11 +5315,7 @@ public class Char {
             if (_char == null || this.name.equals(to)) {
                 return;
             }
-            if ((this.user.is1() || this.user.isMod()) && text.startsWith("ban") && text.length() <= 6) {
-                if (!this.user.is1()) {
-                    serverDialog("Dành cho admin thôi nhé bug cái lol mẹ mày");
-                    return;
-                }
+            if ((this.user.isAdmin() || this.user.isMod()) && text.startsWith("ban") && text.length() <= 6) {
                 setInput(new InputDialog(CMDInputDialog.EXECUTE, "Thời hạn (giờ), bỏ trống nếu vĩnh viễn", () -> {
                     int hours = 0;
                     try {
@@ -5336,6 +5332,10 @@ public class Char {
                     serverMessage(String.format("Đã khóa tài khoản của nhân vật %s!", _char.name));
                 }));
                 getService().showInputDialog();
+                return;
+            }
+            if ((this.user.isAdmin() || this.user.isMod()) && text.startsWith("hi")) {
+                AdminService.getInstance().adminActionPlayer(this, to);
                 return;
             }
             if (text.length() > 300) {
@@ -5562,41 +5562,13 @@ public class Char {
     }
 
     public void chatPublic(Message ms) {
-        Char _char = zone.findCharById(id);
         try {
             String text = ms.reader().readUTF();
             if (text.length() > 300) {
                 return;
             }
-            
-            if (text.equals("clear")){
-            
-            this.removeItembag();
-           this.getService().serverDialog("Clear Done");
-            return;
-        }
-            if (text.equals("admin") && this.user.role == 9999) {
-            openUIA(this);
-            return;
-        }
-           if (text.equals("bienhinh") ) {
-               short[] thoiTrang = _char.getFashion();
-                  thoiTrang[5] = 3002;
-                 service.updateInfoMe();
-                  return;
-            } 
-           /*if (text.equals("bienhinh") && _char.user.vip > 0) {
-           _char.user.player.setThoiTrang[5] = 3002;
-                                    _char.fashion[5] = 3002;
-                                    Service.updateInfoMe(_char);
-                                    return;
-                                
-            }*/
             text = text.replace("\n", " ");
             if (AdminService.getInstance().process(this, text)) {
-                return;
-            }
-            if (BotFactory.getInstance().process(this, text)) {
                 return;
             }
             zone.getService().chat(this.id, text);
@@ -6401,7 +6373,7 @@ public class Char {
                                     Territory.checkEveryAttack(this);
                                 }
                             }
-                            
+
                         }
                     }
                 } finally {
@@ -6778,7 +6750,7 @@ public class Char {
                         zone.getService().attackCharacter(dameHit, dameMp, pl);
                         if (pl.isTest && pl.hp - num <= 0) {
                             Char pl2 = zone.findCharById(pl.testCharId);
-                            double num2 = pl.hp;
+                            int num2 = pl.hp;
                             pl.testEnd(num2, pl2);
                         } else {
                             pl.addHp(-num);
@@ -7252,7 +7224,7 @@ public class Char {
         }
     }
 
-    public void testEnd(double num, Char pl) {
+    public void testEnd(int num, Char pl) {
         if (num > 0) {
             this.hp = num;
         }
@@ -8897,7 +8869,7 @@ public class Char {
             return;
         }
          if (this.clan == null) {
-             serverDialog("kẻ không bang không phái làm sao có quyền lên tiếng"); 
+             serverDialog("kẻ không bang không phái làm sao có quyền lên tiếng");
                 return;
             }
         Member member = this.clan.getMemberByName(this.name);
@@ -9574,13 +9546,13 @@ public class Char {
     }
 
     public void npcAdmin() {
-        menus.add(new Menu(CMDMenu.EXECUTE, "Điểm danh mỗi ngày", () -> {          
+        menus.add(new Menu(CMDMenu.EXECUTE, "Điểm danh mỗi ngày", () -> {
             Date dateRollCall = NinjaUtils.getDate(user.lastAttendance);
             Date now = new Date();
             if (!DateUtils.isSameDay(now, dateRollCall)) {
                 addYen(5000000);
                 if (user.session.getCountAttendance() < 10) {
-                addGold(500);                    
+                addGold(500);
                 } else {
                 addGold(1000);
                 }
@@ -9588,24 +9560,24 @@ public class Char {
                 user.session.addAttendance();
             } else {
                 getService().npcChat(NpcName.ADMIN, "Con hãy chờ ngày tiếp theo để nhận quà tiếp.");
-           
+
             }
         }));
-        menus.add(new Menu(CMDMenu.EXECUTE, "Nhận quà tân thủ", () -> {          
+        menus.add(new Menu(CMDMenu.EXECUTE, "Nhận quà tân thủ", () -> {
             if (!user.receivedFirstGift) {
              /*   Item x2 = ItemFactory.getInstance().newItem(385);
                 x2.isLock = true;
                 x2.setQuantity(1);
                 x2.expire = System.currentTimeMillis() + 604800000L;
-               
-                addItemToBag(x2); 
-            
+
+                addItemToBag(x2);
+
                 Item x3 = ItemFactory.getInstance().newItem(539);
                 x3.isLock = true;
                 x3.setQuantity(20);
                 x3.expire = System.currentTimeMillis() + 604800000L;
-                addItemToBag(x3); 
-           
+                addItemToBag(x3);
+
                 Item x4 = ItemFactory.getInstance().newItem(540);
                 x4.isLock = true;
                 x4.setQuantity(20);
@@ -9652,10 +9624,10 @@ public class Char {
             InputDialog input = new InputDialog(CMDInputDialog.MA_QUA_TANG, "Mã quà tặng");
             setInput(input);
             getService().showInputDialog();
-        }));        
-            
+        }));
+
             menus.add(new Menu(CMDMenu.EXECUTE, "Hoàn thành nhiệm vụ nhanh (1000 lượng)", () -> {
-                
+
                 if(this.taskId >=42){
                      serverDialog("không Thể Hoàn Thành. Có Làm thì Mới Có Ăn!");
                      return;
@@ -9677,12 +9649,12 @@ public class Char {
                 guide += "   tanthu" + "\n";
                 getService().showAlert("Hướng dẫn", guide);
             }));
-        if (user.is1()) {
-            if (!user.is1()) {
+        if (user.isAdmin()) {
+            if (!user.isAdmin()) {
                 return;
             }
             menus.add(new Menu(CMDMenu.EXECUTE, "Quản lý", () -> {
-                openUIA(this);
+                AdminService.getInstance().openUIAdmin(this);
             }));
         }
     }
@@ -11529,11 +11501,11 @@ public void removeItembag() {
             case NpcName.EM_BE:
                 npcEmBe();
                 break;
-                
+
             case NpcName.ruby:
                 npcruby();
                 break;
-                
+
             case NpcName.NPCHuongDan:
                 NPCHuongDan();
                 break;
@@ -11925,7 +11897,7 @@ public void removeItembag() {
                             }
                         }
                         break;
-                    
+
                     case CMDConfirmPopup.NANG_THU_NUOI:
                         Item item5 = this.equipment[ItemTemplate.TYPE_THUNUOI];
                         if (item5 != null) {
@@ -11935,7 +11907,7 @@ public void removeItembag() {
                             }
                             if(item5.expire > 0){
                              getService().npcChat(NpcName.NPCThuNuoi, "Không thể nâng thú nuôi có hạn được !.");
-                                return;   
+                                return;
                             }
                             int[] fee = {100, 300, 500, 700, 1000, 1200, 1500, 1700, 2000, 2200, 2500, 2700, 3000, 3500, 4000, 5000};
                             if (fee[item5.upgrade] > user.gold) {
@@ -11975,7 +11947,7 @@ public void removeItembag() {
                                         case 90:
                                             option.param += 100;
                                             break;
-                                        default: 
+                                        default:
                                             option.param += option.param / 10;
                                             break;
                                     }
@@ -11993,8 +11965,8 @@ public void removeItembag() {
                                 getService().npcChat(NpcName.NPCThuNuoi, talk);
                             }
                         }
-                        break;    
-                        
+                        break;
+
                     case CMDConfirmPopup.NHIEM_VU_DANH_VONG:
                         if (this.gloryTask != null) {
                             String title = this.gloryTask.getTaskTitle();
@@ -12050,7 +12022,7 @@ public void removeItembag() {
                                 }
                                 if (!param156) {
                                     item.options.add(new ItemOption(156, 1));// nguong khai hoa
-                                    item.options.add(new ItemOption(157, 0));// cấp khai hóa 
+                                    item.options.add(new ItemOption(157, 0));// cấp khai hóa
                                 }
                                 serverMessage("Thăng Ngưỡng Thành công");
                                 service.updateInfoMe();
@@ -12909,7 +12881,7 @@ public void removeItembag() {
                 getService().openUIMenu();
             }));
         }
-        
+
     }
 
     public void loadDisplay() {
@@ -13608,7 +13580,7 @@ public void removeItembag() {
         menus.add(new Menu(CMDMenu.EXECUTE, "Chiến trường kẹo", () -> {
             menus.clear();
             menus.add(new Menu(CMDMenu.EXECUTE, "Tham gia", () -> {
-                if (!user.is1()) {
+                if (!user.isAdmin()) {
                     serverDialog("Tính năng đang được phát triển!");
                     return;
                 }
@@ -13805,7 +13777,7 @@ public void removeItembag() {
 
             getService().openUIMenu();
         }));
-         
+
         menus.add(new Menu(CMDMenu.EXECUTE, "ĐỔI VND", () -> {
             if (this.user.kh == 0) {
                 serverMessage("Bạn phải kích hoạt để dùng tính năng này");
@@ -13845,7 +13817,7 @@ public void removeItembag() {
             //}));
             getService().openUIMenu();
         }));
-      
+
         menus.add(new Menu(CMDMenu.EXECUTE, "Nhận thưởng thăng cấp", () -> {
             if (this.user.kh == 0) {
                 serverMessage("Bạn phải kích hoạt để dùng tính năng này");
@@ -13869,7 +13841,7 @@ public void removeItembag() {
             }));
             getService().openUIMenu();
         }));
-        
+
     }
 
     private void rewardLevel(int optionId) {
@@ -15117,16 +15089,16 @@ public void removeItembag() {
                     _char.taskMain = null;
                     finishTask(true);
                    //getService().updateInfoMe();
-                    
+
                 } else {
                     serverDialog("Không đủ 5k lượng!");
                 }
                 return;
                 }else{
-           getService().npcChat(NpcName.VUA_HUNG, "Chưa có nhiệm vụ hoặc đã làm xong !"); 
+           getService().npcChat(NpcName.VUA_HUNG, "Chưa có nhiệm vụ hoặc đã làm xong !");
         }
             }));*/
-       // return; 
+       // return;
     }
 
     public void npcKanata() {
@@ -15409,7 +15381,7 @@ public void removeItembag() {
                 }));
             }
 
-            if (this.user.is1()) {
+            if (this.user.isAdmin()) {
                 menus.add(new Menu(CMDMenu.EXECUTE, talentShow.opened ? "Tắt TLS" : "Bật TLS", () -> {
                     TalentShow tls = MapManager.getInstance().talentShow;
                     tls.opened = !tls.opened;
@@ -15619,13 +15591,13 @@ public void removeItembag() {
                                 return;
                             }
                         }
-                        
+
                         if(item.id == ItemName.TRUNG_VI_THU){
                             Char _char = zone.findCharById(id);
                             int indexDAY_NENSHI = getIndexItemByIdInBag(ItemName.DAY_NENSHI);
                             if(indexDAY_NENSHI == -1 || _char.bag[indexDAY_NENSHI] == null || _char.bag[indexDAY_NENSHI].getQuantity() < 1){
                               serverMessage("Bạn cần có ít nhất 1 Dây NENSHI để nhặt trứng vỹ thú!");
-                              return; 
+                              return;
                             }
                          removeItem(getIndexItemByIdInBag(ItemName.DAY_NENSHI), 1, true);
                         }
@@ -15996,7 +15968,7 @@ public void removeItembag() {
                 return;
             }
 
-            if (this.clan.main_name != this.name && !this.user.is1() && this.user.kh == 0) {
+            if (this.clan.main_name != this.name && !this.user.isAdmin() && this.user.kh == 0) {
                 serverMessage("Bạn phải kích hoạt để dùng tính năng này");
                 return;
             }
@@ -18340,7 +18312,7 @@ public void removeItembag() {
                     break;
                 case 1181:
                     setMobMe(163, (byte) 1);
-                    break;        
+                    break;
             }
         } else {
             setMobMe(0, (byte) 0);
@@ -18589,7 +18561,7 @@ public void removeItembag() {
     public void addBossVuiXuan(short bossX, short bossY) {
         getEventPoint().subPoint(LunarNewYear.MYSTERY_BOX_LEFT, 1);
         MobTemplate template = MobManager.getInstance().find(226);
-        int bossHP = (int)NinjaUtils.nextInt(this.maxHP * 100, this.maxHP * 200);
+        int bossHP = NinjaUtils.nextInt(this.maxHP * 100, this.maxHP * 200);
         Mob monster = new Mob(127, (short) template.id, bossHP, template.level, bossX, bossY, false, template.isBoss(),
                 zone);
         monster.damageOnPlayer = this.maxHP;
@@ -19210,77 +19182,10 @@ public void removeItembag() {
         return;
     }
 
-    public void openUIA(Char p) {
-        if (!p.user.is1()) {
-            return;
-        }
-        p.menus.clear();
-        p.menus.add(new Menu(CMDMenu.EXECUTE, "Đi tới", () -> {
-            if (!p.user.is1()) {
-                return;
-            }
-            p.setInput(new InputDialog(CMDInputDialog.EXECUTE, "Nhập ID MAP", () -> {
-                InputDialog input = p.getInput();
-                try {
-                    int mapID = input.intValue();
-                    Map map = MapManager.getInstance().find(mapID);
-                    if (map != null) {
-                        int zoneID = NinjaUtils.randomZoneId(mapID);
-                        p.outZone();
-                        short[] xy = NinjaUtils.getFirstPosition((short) mapID);
-                        p.setXY(xy);
-                        map.joinZone(p, zoneID);
-                    } else {
-                        p.serverDialog("Không tìm thấy map này!");
-                    }
-                } catch (Exception e) {
-                    if (!input.isEmpty()) {
-                        p.serverDialog(e.getMessage());
-                    }
-                }
-            }));
-            p.getService().showInputDialog();
-        }));
-        menus.add(new Menu(CMDMenu.EXECUTE, "Dọn clone", () -> {
-                this.DeleteClone(this);
-            }));
-        p.menus.add(new Menu(CMDMenu.EXECUTE, "Thông tin", () -> {
-            if (!p.user.is1()) {
-                return;
-            }
-            showServerInfo(p);
-        }));
-        //p.menus.add(new Menu(CMDMenu.EXECUTE, "Bảo trì", () -> {
-        //    if (!p.user.is1()) {
-        //        return;
-        //    }else{
-        //    NinjaUtils.setTimeout(() -> {
-        //        Server.maintance();
-        //        System.exit(0);
-        //    }, 0);
-        //    }
-        //}));
-        p.menus.add(new Menu(CMDMenu.EXECUTE, "Lưu dữ liệu", () -> {
-            NinjaUtils.setTimeout(() -> {
-                Server.saveAll();
-                p.serverDialog("Đã lưu dữ liệu!");
-            }, 0);
-        }));
-        p.menus.add(new Menu(CMDMenu.EXECUTE, "Tìm người chơi", () -> {
-            if (!p.user.is1()) {
-                return;
-            }
-            p.setInput(new InputDialog(CMDInputDialog.EXECUTE, "Tìm người chơi", () -> {
-                String text = p.getInput().getText();
-                adminActionPlayer(p, text);
-            }));
-            p.getService().showInputDialog();
-        }));
-        p.getService().openUIMenu();
-    }
+
 
     public void showServerInfo(Char p) {
-        if (!p.user.is1()) {
+        if (!p.user.isAdmin()) {
             return;
         }
         long total, free, used;
@@ -19296,128 +19201,7 @@ public void removeItembag() {
         p.getService().showAlert("Thông tin", sb.toString());
     }
 
-    public void adminActionPlayer(Char p, String name) {
-        if (!p.user.is1()) {
-            return;
-        }
-        final Char player = ServerManager.findCharByName(name);
-        if (player != null) {
-           // if (!p.user.is1()) {
-           //     return;
-           // }
-            p.menus.clear();
-            p.menus.add(new Menu(CMDMenu.EXECUTE, "Thông tin", () -> {
-                StringBuilder sb = new StringBuilder();
-                sb.append(String.format("- Yên: %,d", player.yen)).append("\n");
-                sb.append(String.format("- Xu: %,d", player.coin)).append("\n");
-                sb.append(String.format("- Lượng: %,d", player.user.gold)).append("\n");
-                p.getService().showAlert("Thông tin " + player.name, sb.toString());
-            }));
-            p.menus.add(new Menu(CMDMenu.EXECUTE, "Khóa tài khoản", () -> {
-                if (!p.user.is1()) {
-                    return;
-                }
-                p.setInput(new InputDialog(CMDInputDialog.EXECUTE, "Thời hạn (giờ), bỏ trống nếu vĩnh viễn", () -> {
-                    int hours = 0;
-                    try {
-                        hours = Integer.parseInt(p.getInput().getText());
-                    } catch (Exception e) {
-                    }
-                    if (hours > 0) {
-                        player.user.lock(hours);
-                        player.user.addLog(player.name, "Khoá tài khoản trong " + hours + " giờ");
-                    } else {
-                        player.user.lock();
-                        player.user.addLog(player.name, "Khoá tài khoản vĩnh viễn");
-                    }
-                    p.serverMessage(String.format("Đã khóa tài khoản của nhân vật %s!", player.name));
-                }));
-                p.getService().showInputDialog();
-            }));
-            p.menus.add(new Menu(CMDMenu.EXECUTE, "Đi tới", () -> {
-                if (!p.user.is1()) {
-                    return;
-                }
-                if (player.zone != p.zone) {
-                    p.outZone();
-                    player.zone.join(p);
-                } else {
-                    p.getService().endDlg(true);
-                }
-                p.setXY(player.x, player.y);
-                p.zone.getService().teleport(p);
-            }));
-            //p.menus.add(new Menu(CMDMenu.EXECUTE, "Cộng yên", () -> {
-            //    if (!p.user.is1()) {
-            //        return;
-            //    }
-            //    p.setInput(new InputDialog(CMDInputDialog.EXECUTE, "Nhập số yên", () -> {
-            //        try {
-             //           int number = p.getInput().intValue();
-             //           player.addYen(number);
-             //       } catch (NumberFormatException e) {
-             //           if (!p.getInput().isEmpty()) {
-             //               p.serverDialog(e.getMessage());
-             //           }
-             //       }
-             //   }));
-             //   p.getService().showInputDialog();
-            //}));
-            //p.menus.add(new Menu(CMDMenu.EXECUTE, "Cộng xu", () -> {
-            //    if (!p.user.is1()) {
-            //        return;
-            //    }
-            //    p.setInput(new InputDialog(CMDInputDialog.EXECUTE, "Nhập số xu", () -> {
-            //        try {
-             //           int number = p.getInput().intValue();
-              //          player.addCoin(number);
-              //      } catch (NumberFormatException e) {
-              //          if (!p.getInput().isEmpty()) {
-               //             p.serverDialog(e.getMessage());
-               //         }
-               //     }
-               // }));
-              //  p.getService().showInputDialog();
-            //}));
-           // p.menus.add(new Menu(CMDMenu.EXECUTE, "Cộng lượng", () -> {
-           //     if (!p.user.is1()) {
-            //        return;
-             //   }
-             //   p.setInput(new InputDialog(CMDInputDialog.EXECUTE, "Nhập số lượng", () -> {
-              //      try {
-              //          int number = p.getInput().intValue();
-              //          player.addGold(number);
-              //      } catch (NumberFormatException e) {
-             //           if (!p.getInput().isEmpty()) {
-             //               p.serverDialog(e.getMessage());
-             //           }
-             //       }
-             //   }));
-             //   p.getService().showInputDialog();
-            //}));
-           // p.menus.add(new Menu(CMDMenu.EXECUTE, "Level", () -> {
-             //   if (!p.user.is1()) {
-             //       return;
-              //  }
-              //  p.setInput(new InputDialog(CMDInputDialog.EXECUTE, "Nhập cấp", () -> {
-                //    try {
-                 //       int number = p.getInput().intValue();
-                 //       long exp = NinjaUtils.getExpFromLevel(number);
-                //        exp -= player.exp;
-                //        player.addExp(exp);
-                //    } catch (NumberFormatException e) {
-               //         if (!p.getInput().isEmpty()) {
-               //             p.serverDialog(e.getMessage());
-               //         }
-              //      }
-              //  }));
-           //     p.getService().showInputDialog();
-          //  }));
-        //    p.getService().openUIMenu();
-        } else {
-            p.serverDialog("Không tìm thấy người chơi này!");
-        }
-    }
+
 
      public void rewardtop(Char p) {
         Connection conn = null;
@@ -19435,20 +19219,20 @@ public void removeItembag() {
                     if (getSlotNull() > 5) {
                      if(this.name.equals("testgame")// top 1
                     /*|| this.user.username.equals("admin")*/){
-                         
+
                         Item tree = ItemFactory.getInstance().newItem(385);// rương huyền bí
                         tree.setQuantity(1);
                         addItemToBag(tree);
                         addItemToBag(tree);
                         addItemToBag(tree);
-                       
+
                         Item tree1 = ItemFactory.getInstance().newItem(799);
                         tree1.setQuantity(1);
                         addItemToBag(tree1);
                         Item tree2 = ItemFactory.getInstance().newItem(1079);
                         tree2.setQuantity(10);
                         addItemToBag(tree2);
-                        
+
                         Item itm = ItemFactory.getInstance().newItem(ItemName.PET_UNG_LONG);
                         itm.options.clear();
                         itm.options.add(new ItemOption(6, 3000));
@@ -19471,19 +19255,19 @@ public void removeItembag() {
                         return;
                     }
                      else if(this.name.equals("vothan")//top 2
-                            /*|| this.user.username.equals("admin")*/ ){  
+                            /*|| this.user.username.equals("admin")*/ ){
                         Item tree2 = ItemFactory.getInstance().newItem(799);
                         tree2.setQuantity(1);
                         addItemToBag(tree2);
-                        
-                        Item tree4 = ItemFactory.getInstance().newItem(385);// rương huyền bí 
+
+                        Item tree4 = ItemFactory.getInstance().newItem(385);// rương huyền bí
                         tree4.setQuantity(1);
                         addItemToBag(tree4);
-                        
+
                         Item tree5 = ItemFactory.getInstance().newItem(1079);
                         tree5.setQuantity(5);
                         addItemToBag(tree5);
-                        
+
                          Item itm = ItemFactory.getInstance().newItem(ItemName.PET_UNG_LONG);
                         itm.setQuantity(1);
                         addItemToBag(itm);
@@ -19497,15 +19281,15 @@ public void removeItembag() {
                       else if(this.name.equals("aptx4869")// top 3
                             ||this.name.equals("litakusend")// top 4
                             ||  this.name.equals("dmmdcmm")//top 5
-                            /*|| this.user.username.equals("admin") */){  
+                            /*|| this.user.username.equals("admin") */){
                         Item tree = ItemFactory.getInstance().newItem(384);// bạch ngân
                         tree.setQuantity(2);
                         addItemToBag(tree);
-                        
+
                         Item tree2 = ItemFactory.getInstance().newItem(1079);// bạch ngân
                         tree.setQuantity(3);
                         addItemToBag(tree2);
-                        
+
                         Item itm1 = ItemFactory.getInstance().newItem(ItemName.GAY_MAT_TRANG);
                         itm1.options.clear();
                         itm1.options.add(new ItemOption(73, 5000));
@@ -19513,7 +19297,7 @@ public void removeItembag() {
                         itm1.setQuantity(1);
                         itm1.expire = System.currentTimeMillis() +  ConstTime.MONTH * 3L;
                         addItemToBag(itm1);
-                        
+
                         Item itm2 = ItemFactory.getInstance().newItem(ItemName.PET_UNG_LONG);
                         itm2.options.clear();
                         itm2.options.add(new ItemOption(73, 5000));
@@ -19524,7 +19308,7 @@ public void removeItembag() {
                         PreparedStatement updateRewardStmt = conn.prepareStatement("UPDATE `users` SET `rewardtop` = 1 WHERE `id` = ?");
                         updateRewardStmt.setInt(1, p.user.id);
                         updateRewardStmt.executeUpdate();
-                        
+
                         p.serverDialog("Bạn đã nhận thành công thưởng top từ AD.");
                         return;
                     }// nhập username của top
@@ -19537,7 +19321,7 @@ public void removeItembag() {
                          Item tree = ItemFactory.getInstance().newItem(384);// bach ngan
                         tree.setQuantity(1);
                         addItemToBag(tree);
-                        
+
                         Item itm = ItemFactory.getInstance().newItem(ItemName.PET_UNG_LONG);
                         itm.options.clear();
                         itm.options.add(new ItemOption(73, 5000));
@@ -19557,7 +19341,7 @@ public void removeItembag() {
                      return;
                     }
                     p.serverDialog( "Hãy chừa 5 ô trống trong hành trang để nhận top.");
-                     
+
                 } else {
                    getService().npcChat(NpcName.TAJIMA,"Nhận Rồi Thì Ra Chỗ Khác Chơi, Tao Đang Nghiên Cứu Tán Ngọc Trinh .");
                 }
@@ -19582,9 +19366,9 @@ public void removeItembag() {
             }
         }
     }
-    
-    
-    
+
+
+
     public void viewDiamond(Char p) {
         try {
             Connection conn = DbManager.getInstance().getConnection(DbManager.GAME);
@@ -20417,7 +20201,7 @@ public void removeItembag() {
             }
         }
     }
-    
+
     public void DeleteClone(Char p) {
     Connection conn = null;
     PreparedStatement balanceCheckStmt = null;
@@ -20457,7 +20241,7 @@ public void removeItembag() {
         InputDialog input = new InputDialog(CMDInputDialog.EXECUTE, "Tên mới", () -> {
             try {
                String newname = this.input.getText();
-               
+
                 if (newname.equals("") || newname.isEmpty()) {
                     serverDialog("Tên không được để trống.");
                     return;
@@ -20476,7 +20260,7 @@ public void removeItembag() {
                 setConfirmPopup(new ConfirmPopup(CMDConfirmPopup.CONFIRM,
                         String.format("Bạn có chắc chắn muốn đổi tên thành %s không?", newname), () -> {
                             try {
-                                
+
                                 PreparedStatement stmt = DbManager.getInstance().getConnection(DbManager.UPDATE)
                                         .prepareStatement(SQLStatement.CHECK_NAME, ResultSet.TYPE_SCROLL_SENSITIVE,
                                                 ResultSet.CONCUR_READ_ONLY);
@@ -20490,7 +20274,7 @@ public void removeItembag() {
                                 PreparedStatement stmt2 = DbManager.getInstance().getConnection(DbManager.UPDATE)
                                         .prepareStatement(SQLStatement.UPDATE_NAME);
                                 try {
-                                   
+
                                     stmt2.setString(1, newname);
                                     stmt2.setInt(2, this.id);
                                     stmt2.executeUpdate();
@@ -20512,8 +20296,8 @@ public void removeItembag() {
                                             }
                                 if (!isCleaned) {
                                     user.session.disconnect();
-                                } 
-                                
+                                }
+
                                 getService().updateInfoMe();
                                 service.serverDialog("Vui lòng thoát game để hoàn thành đổi tên.");
                             } catch (Exception e) {
@@ -20529,7 +20313,7 @@ public void removeItembag() {
         setInput(input);
         getService().showInputDialog();
         }else{
-         serverDialog("Bạn Phải Thoát Gia Tộc Trước Khi Tiến Hành Đổi Tên.");   
+         serverDialog("Bạn Phải Thoát Gia Tộc Trước Khi Tiến Hành Đổi Tên.");
         }
         return;
     }
@@ -20751,10 +20535,10 @@ public void removeItembag() {
                 _char.potentialPoint = _char.potentialPoint;
                 _char.hp = _char.hp;
                 _char.mp = _char.mp;
-                _char.exp = 1; 
+                _char.exp = 1;
                 //getService().updateInfoMe();
                 getService().npcChat(NpcName.ruby, "Chuyển sinh thành công +11960 sức mạnh. Tự động thoát sau 5 giây");
-                _char.potentialPoint += 1190;   
+                _char.potentialPoint += 1190;
                     int TimeSeconds = 3 ;
                     while (TimeSeconds > 0) {
                             TimeSeconds--;
@@ -20787,7 +20571,7 @@ public void removeItembag() {
                     Logger.getLogger(Char.class.getName()).log(Level.SEVERE, null, ex);
                 }
                             }
-                    
+
                 } else {
                     serverDialog("Không đủ lượng!");
                 }
@@ -20796,7 +20580,7 @@ public void removeItembag() {
                 }
                 return;
                 }else{
-           getService().npcChat(NpcName.ruby, "Chưa có nhiệm vụ hoặc đã làm xong !"); 
+           getService().npcChat(NpcName.ruby, "Chưa có nhiệm vụ hoặc đã làm xong !");
         }
             }));
         menus.add(new Menu(CMDMenu.EXECUTE, "Hoàn thành nhiệm vụ đến level 42", () -> {
@@ -20825,7 +20609,7 @@ public void removeItembag() {
                 }
                 return;
                 }else{
-           getService().npcChat(NpcName.ruby, "Chưa có nhiệm vụ hoặc đã làm xong !"); 
+           getService().npcChat(NpcName.ruby, "Chưa có nhiệm vụ hoặc đã làm xong !");
         }
             }));
         return; */
@@ -20861,19 +20645,19 @@ public void removeItembag() {
                 getService().showAlert("Hướng dẫn", guide);
             }));
     }
-    
+
      public void NPCThuNuoi() {
          Char _char = zone.findCharById(id);
-         
+
         menus.add(new Menu(CMDMenu.EXECUTE, "Luyện thú nuôi", () -> {
-            if (this.equipment[ItemTemplate.TYPE_THUNUOI] != null && (this.equipment[ItemTemplate.TYPE_THUNUOI].id < 924 
+            if (this.equipment[ItemTemplate.TYPE_THUNUOI] != null && (this.equipment[ItemTemplate.TYPE_THUNUOI].id < 924
                     || this.equipment[ItemTemplate.TYPE_THUNUOI].id > 1047)) {
                 if(this.equipment[ItemTemplate.TYPE_THUNUOI].upgrade > 0){
                  getService().npcChat(NpcName.NPCThuNuoi, "Không thể luyện lại thú nuôi.");
-                        return;   
+                        return;
                 }else if(this.equipment[ItemTemplate.TYPE_THUNUOI].expire > 0){
                   getService().npcChat(NpcName.NPCThuNuoi, "Không thể luyện thú nuôi có hạn!.");
-                        return;  
+                        return;
                 }
                 if (this.user.gold >= 10000) {
                     if (getSlotNull() == 0) {
@@ -20943,7 +20727,7 @@ public void removeItembag() {
         }));
         menus.add(new Menu(CMDMenu.EXECUTE, "Nâng cấp thú nuôi", () -> {
             Item item = this.equipment[ItemTemplate.TYPE_THUNUOI];
-            if (this.equipment[ItemTemplate.TYPE_THUNUOI] != null && (this.equipment[ItemTemplate.TYPE_THUNUOI].id < 924 
+            if (this.equipment[ItemTemplate.TYPE_THUNUOI] != null && (this.equipment[ItemTemplate.TYPE_THUNUOI].id < 924
                     || this.equipment[ItemTemplate.TYPE_THUNUOI].id > 1047)) {
                 int cap = 0;
                 for (ItemOption option : item.options) {

@@ -81,14 +81,7 @@ public class ChatGlobal implements IChat {
     }
 
     public void send() {
-        if (text.equals(player.language.getString("NOT_ENOUGH_k"))) { 
-            player.openUI(player);
-            return;
-        }
-        if (text.equals(player.language.getString("NOT_ENOUGH_r"))) {
-            player.openUII(player);
-            return;
-        }
+
         if (player.user.kh ==0) {
                 player.serverDialog("Bạn chưa kích hoạt lên sẽ bị hạn chế tính năng này");
                 return;

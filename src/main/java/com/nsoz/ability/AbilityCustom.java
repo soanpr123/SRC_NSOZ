@@ -25,14 +25,14 @@ import lombok.Setter;
 @Setter
 public class AbilityCustom implements AbilityStrategy {
 
-    private double hp;
-    private double mp;
-    private double damage, damage2;
-    private double exactly;
-    private double miss;
-    private double fatal;
+    private int hp;
+    private int mp;
+    private int damage, damage2;
+    private int exactly;
+    private int miss;
+    private int fatal;
     private byte speed;
-    private double resFire, resIce, resWind, reactDame;
+    private int resFire, resIce, resWind, reactDame;
     private ArrayList<ItemOption> options;
 
     @Override

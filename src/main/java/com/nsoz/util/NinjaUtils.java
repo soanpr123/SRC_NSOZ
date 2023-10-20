@@ -217,7 +217,7 @@ public class NinjaUtils {
         }
         return sum;
     }
-    
+
     public static long sum(long... numbers) {
         long sum = 0;
         for (long number : numbers) {
@@ -225,7 +225,7 @@ public class NinjaUtils {
         }
         return sum;
     }
-    
+
     public static double sum(double... numbers) {
         double sum = 0;
         for (double number : numbers) {
@@ -234,11 +234,11 @@ public class NinjaUtils {
         return sum;
     }
 
-    public static double nextInt(double min, double max) {
+    public static int nextInt(int min, int max) {
         if (min >= max) {
             return max;
         }
-        return rand.nextInt((int) (max + 1 - min)) + min;
+        return rand.nextInt( (max + 1 - min)) + min;
     }
 
     public static void setOption(int[][] option, int up1, int up2) {

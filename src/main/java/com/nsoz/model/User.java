@@ -19,12 +19,12 @@ import com.nsoz.network.Session;
 import com.nsoz.server.Config;
 import com.nsoz.server.NinjaSchool;
 import com.nsoz.server.ServerManager;
-import com.nsoz.socket.Action;
-import com.nsoz.socket.SocketIO;
+
 import com.nsoz.task.TaskOrder;
 import com.nsoz.util.Log;
 import com.nsoz.util.NinjaUtils;
 import com.nsoz.util.StringUtils;
+
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,6 +39,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
@@ -138,8 +139,8 @@ public class User {
                     return null;
                 }
 //                if (!StringUtils.checkPassword(passwordHash, password)) {
- //                   return null;//cái này mã hóa
-  //              }
+                //                   return null;//cái này mã hóa
+                //              }
             }
             return map;
         } catch (SQLException e) {
@@ -147,7 +148,7 @@ public class User {
         }
         return null;
     }
-    
+
 
     public void login() {
         try {
@@ -192,7 +193,7 @@ public class User {
             this.effygt = (int) map.get("effygt");
             this.effydc = (int) map.get("effydc");
             this.effydh = (int) map.get("effydh");
-             this.nhanmocnap = (int) map.get("nhanmocnap");
+            this.nhanmocnap = (int) map.get("nhanmocnap");
             if (obj != null) {
                 this.banUntil = (Timestamp) obj;
                 long now = System.currentTimeMillis();
@@ -206,12 +207,12 @@ public class User {
 //            if (this.activated == 0) {
 //                service.serverDialog("Tài khoản chưa được kích hoạt. Vui lòng truy cập nsoz.me để kích hoạt tài khoản.");
 //                return;
-//            } 
+//            }
             else if (this.status == 0) {
                 service.serverDialog("Liên hệ AD để kích hoạt acc!");
                 return;
             }
-            if(this.gold < 0){
+            if (this.gold < 0) {
                 service.serverDialog("Tài khoản bị âm lượng!");
                 return;
             }
@@ -274,7 +275,7 @@ public class User {
     }
 
     public void forceOutOtherServer() {
-        SocketIO.emit(Action.FORCE_OUT, String.format("{\"user_id\":\"%d\", \"server_id\":\"-1\", \"current_server\":\"%d\"}", this.id, Config.getInstance().getServerID()));
+//        SocketIO.emit(Action.FORCE_OUT, String.format("{\"user_id\":\"%d\", \"server_id\":\"-1\", \"current_server\":\"%d\"}", this.id, Config.getInstance().getServerID()));
     }
 
     public void initCharacterList() {
@@ -613,9 +614,16 @@ public class User {
             session.disconnect();
         } catch (Exception e) {
         }
-    }public boolean is1() {
-            return this.roles.contains(1);
-        }
+    }
+
+//    public boolean is1() {
+//        return this.roles.contains(1);
+//    }
+
+    public boolean isAdmin() {
+        return this.roles.contains(1);
+    }
+
     public void saveData() {
         try {
             if (isLoadFinish && !saving) {

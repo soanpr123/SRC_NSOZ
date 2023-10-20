@@ -161,7 +161,7 @@ public class Ranked {
             Log.error("init top hang dong", ex);
         }
     }
-    
+
     public static void initTopNap() {
         try {
             Vector<String> ranked = new Vector<>();
