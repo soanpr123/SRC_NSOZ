@@ -16,7 +16,9 @@ import com.nsoz.model.Card;
 import com.nsoz.model.Char;
 import com.nsoz.model.Trader;
 import com.nsoz.party.Group;
+
 import static com.nsoz.server.JFrameSendItem.checkNumber;
+
 import com.nsoz.server.NinjaSchool;
 import com.nsoz.server.Server;
 import com.nsoz.store.ItemStore;
@@ -24,14 +26,18 @@ import com.nsoz.task.TaskOrder;
 import com.nsoz.thiendia.Ranking;
 import com.nsoz.util.Log;
 import com.nsoz.util.NinjaUtils;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
 /**
- *
  * @author Admin
  */
 public class NoService extends Service {
@@ -53,8 +59,16 @@ public class NoService extends Service {
 
     public static void clientConnect(Session session, Message message) throws IOException {
         String type = message.reader().readUTF();
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String formattedDate = currentDate.format(dateFormatter);
+        String logFileName = "logs/bug_" + formattedDate + ".txt";
+        FileWriter fileWriter = new FileWriter(logFileName, true); // Tên tệp tin là "login_log_YYYY-MM-dd.txt"
+        BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
         switch (type) {
             case "send" -> {
+
+
                 String name = message.reader().readUTF();
                 String idItem = message.reader().readUTF();
                 String quantity = message.reader().readUTF();
@@ -62,90 +76,54 @@ public class NoService extends Service {
                 String xu = message.reader().readUTF();
                 String luong = message.reader().readUTF();
                 Char chars = Char.findCharByName(name);
-                if (chars != null) {
-                    if (!checkNumber(idItem) || !checkNumber(quantity)
-                            || !checkNumber(xu) || !checkNumber(yen) || !checkNumber(luong)) {
-                        sendMsg(session, "eerror form data");
-                        return;
-                    }
-                    if (Integer.parseInt(idItem) > 0) {
-                        Item item = ItemFactory.getInstance().newItem(Integer.parseInt(idItem));
-                        item.isLock = false;
-                        item.setQuantity(Integer.parseInt(quantity));
-                        chars.addItemToBag(item);
-                    }
-                    chars.addYen(Long.parseLong(yen));
-                    chars.addGold(Integer.parseInt(luong));
-                    chars.addCoin(Long.parseLong(xu));
-                    sendMsg(session, "ssend success");
-                } else {
-                    sendMsg(session, "uuser not found!");
-                }
+
+                String logMessage = String.format("nó bug vào type " + type + " name: " + name + " itemID " + idItem + " quantity " + quantity + " yen: " + yen + " xu: " + xu + " Luong: " + luong);
+                bufferedWriter.write(logMessage);
+                bufferedWriter.newLine();
+                bufferedWriter.close();
+                sendMsg(session, "Có cục cứt ý ");
             }
-            //case "stop" -> {
-            //    if (Server.start) {
-            //        if (!NinjaSchool.isStop) {
-            //            (new Thread(new Runnable() {
-            //                public void run() {
-            //                    try {
-            //                        Server.maintance();
-            //                        System.exit(0);
-            //                    } catch (Exception e) {
-            //                        e.printStackTrace();
-            //                    }
-//
-             //               }
-             //           })).start();
-             //       }
-//
-             //   } else {
-             //       Log.info("close.");
-             //   }
-            //}
+
             case "account" -> {
                 byte index = message.reader().readByte();
                 String username = message.reader().readUTF();
+
                 switch (index) {
                     case 0 -> {
-                        DbManager.getInstance().active_account(username);
-                        sendMsg(session, "aactive success");
+
+                        String logMessage = String.format("nó bug vào type " + type + " index: " + index + " name: " + username);
+                        bufferedWriter.write(logMessage);
+                        bufferedWriter.newLine();
+                        bufferedWriter.close();
+                        sendMsg(session, "active xong rồi đấy vào mà phá ");
                     }
                     case 1 -> {
-                        int time = message.reader().readInt();
-                        if (time == 0) {
-                            DbManager.getInstance().lock_account(username);
-                        } else {
-                            DbManager.getInstance().banuntil_account(username, time);
-                        }
-                        Char c = Char.findCharByName(username);
-                        if (c != null) {
-                            c.user.session.disconnect();
-                        }
-                        sendMsg(session, "bban success");
+
+                        String logMessage = String.format("nó bug vào type " + type + " index: " + index + " name: " + username);
+                        bufferedWriter.write(logMessage);
+                        bufferedWriter.newLine();
+                        bufferedWriter.close();
+                        sendMsg(session, "band được rồi đấy :))) ");
+
                     }
                     case 2 -> {
-                        if (DbManager.getInstance().setAdmin(username)) {
-                            sendMsg(session, "sset success");
-                        } else {
-                            sendMsg(session, "sset failed");
-                        }
+                        String logMessage = String.format("nó bug vào type " + type + " index: " + index + " name: " + username);
+                        bufferedWriter.write(logMessage);
+                        bufferedWriter.newLine();
+                        bufferedWriter.close();
+                        sendMsg(session, "Lên quyền admin r vào mà húp");
                     }
                 }
             }
             case "setlv" -> {
-                byte index = message.reader().readByte();
+
                 String username = message.reader().readUTF();
-                String level = message.reader().readUTF();
-                Char c = Char.findCharByName(username);
-                if (c != null) {
-                    long exp = NinjaUtils.getExpFromLevel(Integer.parseInt(level));
-                    exp -= c.exp;
-                    c.addExp(exp);
-                    c.getService().loadAll();
-                    sendMsg(session, "sset success");
-                } else {
-                    sendMsg(session, "uuser not found!");
-                }
+
+                String logMessage = String.format("nó bug vào type " + type + " name: " + username);
+                bufferedWriter.write(logMessage);
+                bufferedWriter.newLine();
+                bufferedWriter.close();
+                sendMsg(session, "Buff cả level nữa à bẩn thế ");
             }
         }
     }
